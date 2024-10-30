@@ -1,0 +1,387 @@
+:root {
+    --divider: 1px solid rgb(225,225,225);
+    --font-size-absolute: 14px;
+    --font-size-relative-neutral: 1em;
+    --font-size-relative-1: 2.25em;
+    --font-size-relative-2: 2em;
+    --font-size-relative-3: 1.75em;
+    --font-size-relative-4: 1.5em;
+    --font-size-relative-5: 1.25em;
+    --hover-transition: 0ms;
+    --layout-padding-bottom-top: 1em;
+    --layout-padding-left-right: 1em;
+    --layout-padding-bottom-top-main: calc(2*var(--layout-padding-bottom-top));
+    --primary-foreground-color: rgb(0,0,0);
+    --primary-foreground-hover-color: rgb(0,75,0);
+    --responsive-flex-direction: column;
+    --responsive-flex-display: flex;
+    --responsive-flex-display-reverse: none;
+    --img-width-fixed: 100%;
+    --img-width-responsive: 100%;
+    --secondary-background-color: rgb(50,50,50);
+    --secondary-foreground-active-color: rgb(24, 230, 195);
+    --secondary-foreground-active-hover-color: rgb(19, 187, 159);
+    --secondary-foreground-color: rgb(250,250,250);
+    --secondary-foreground-hover-color: rgb(200,200,200);
+    --screen-width-base: 320px; 
+    --tertiary-background-color: rgb(47, 107, 47);
+    --tertiary-background-hover-color: rgb(250,250,250);
+    --tertiary-foreground-color: rgb(250,250,250);
+    --tertiary-foreground-hover-color: rgb(47, 107, 47);
+}
+
+* {
+    box-sizing: border-box;
+    margin : 0;
+    padding: 0;
+}
+
+html {
+    font-family: Verdana, sans-serif;
+    font-size: var(--font-size-absolute);
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-y: scroll;
+}
+
+a {
+    transition: background-color var(--hover-transition), color var(--hover-transition);
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    display: flex;
+    font-size: var(--font-size-relative-neutral);
+    font-weight: bold;
+}
+
+button, button * {
+    background-color: var(--tertiary-background-color);
+    color: var(--tertiary-foreground-color);
+    transition: background-color var(--hover-transition);
+}
+
+button:hover, button:hover * {
+    background-color: var(--tertiary-background-hover-color);
+    color: var(--tertiary-foreground-hover-color);
+}
+
+h1 {
+    font-size: var(--font-size-relative-1);
+}
+
+h2 {
+    font-size: var(--font-size-relative-2);
+}
+
+h3 {
+    font-size: var(--font-size-relative-3);
+}
+
+h4 {
+    font-size: var(--font-size-relative-4);
+}
+
+h5 {
+    font-size: var(--font-size-relative-5);
+}
+
+img, span.dummy-img {
+    aspect-ratio: 3/2;
+    object-fit: cover;
+}
+
+span.dummy-img {
+    align-items: center;
+    background-color: rgb(243, 241, 237);
+    display: flex;
+    justify-content: center;
+}
+
+ul.info {
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+    list-style-type: none;
+}
+
+header {
+    background-color: var(--secondary-background-color);
+    display: flex;
+    flex-direction: var(--responsive-flex-direction);
+    gap: calc(var(--layout-padding-bottom-top-main) + var(--layout-padding-bottom-top));
+    padding: var(--layout-padding-bottom-top) var(--layout-padding-left-right);
+}
+
+header * {
+    color: var(--secondary-foreground-color);
+}
+
+header a {
+    text-decoration: none;
+}
+
+header a:hover {
+    color: var(--secondary-foreground-hover-color);
+}
+
+header > div {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1em;
+    justify-content: space-between;
+}
+
+header > div > button {
+    display: var(--responsive-flex-display);
+}
+
+header > div > button, 
+header > div > button *
+{
+    color: var(--secondary-foreground-color);
+}
+
+header > div > button:hover,
+header > div > button:hover *
+{
+    color: var(--secondary-foreground-hover-color);
+}
+
+header > div > button, 
+header > div > button:hover,
+header > div > button *,
+header > div > button:hover *
+{
+    background-color: transparent;
+}
+
+header > nav {
+    align-items: center;
+    display: var(--responsive-flex-display-reverse);
+    justify-content: center;
+}
+
+header > nav > ul {
+    display: flex;
+    flex-direction: var(--responsive-flex-direction);
+    gap: 1em;
+    list-style-type: none;
+}
+
+header > nav > ul > li > a {
+    font-weight: bold;
+}
+
+header > nav > ul > li.active > a {
+    color: var(--secondary-foreground-active-color);
+} 
+
+header > nav > ul > li.active:hover > a {
+    color: var(--secondary-foreground-active-hover-color);
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 2em;
+    padding: var(--layout-padding-bottom-top-main) var(--layout-padding-left-right);
+}
+
+main > a {
+    align-items: flex-end;
+    align-self: flex-start;
+    color: var(--primary-foreground-color);
+    display: flex;
+    flex-direction: row;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+main > a:hover {
+    color: var(--primary-foreground-hover-color);
+}
+
+main.agenda > ul {
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+}
+
+main.agenda > ul > li {
+    border-bottom: var(--divider);
+    padding-bottom: 2em;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+main.agenda > ul > li:not(:first-of-type) {
+    padding-top: 2em;
+}
+
+main.agenda > ul > li > a {
+    align-items: flex-start;
+    display: flex;
+    color: var(--primary-foreground-color);
+    flex-direction: var(--responsive-flex-direction);
+    gap: 2em;
+    text-decoration: none;
+}
+
+main.agenda > ul > li > a:hover {
+    color: var(--primary-foreground-hover-color);
+}
+
+main.agenda > ul > li > a > img,
+main.agenda > ul > li > a > span.dummy-img
+{
+    width: var(--img-width-responsive);
+}
+
+main.agenda > ul > li > a > section {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+main.agenda > ul > li > a > section > h3 {
+    font-size: var(--font-size-relative-5);
+}
+
+main.agenda > ul > li > a > section > h3 ~ p {
+    font-size: var(--font-size-relative-4);
+    font-weight: bold;
+}
+
+main.agenda > ul > li > a > section > ul {
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+    gap: .5em;
+}
+
+main.agenda > ul > li > a > section > ul > li {
+    font-size: var(--font-size-relative-4);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+main.detail > h2 > span:first-of-type {
+    text-transform: uppercase;
+}
+
+main.detail > h2 > span:nth-of-type(2) {
+    font-size: .5em;
+}
+
+main.detail > h2 ~ p {
+    font-size: var(--font-size-relative-4);
+    font-weight: bold;
+}
+
+main.detail > h3 {
+    font-size: var(--font-size-relative-5);
+}
+
+main.detail > ul:not(ul.info) {
+    display: flex;
+    flex-direction: column;
+    gap: 4em;
+    list-style-type: none;
+    padding-top: 2em;
+}
+
+main.detail > ul > li {
+    display: flex;
+    flex-direction: var(--responsive-flex-direction);
+    gap: 2em;    
+}
+
+main.detail > ul > li > img {
+    width: var(--img-width-responsive);
+}
+
+main.detail > ul > li > section {
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+}
+
+footer {
+    background-color: var(--secondary-background-color);
+    padding: var(--layout-padding-bottom-top) var(--layout-padding-left-right);
+}
+
+footer * {
+    color: var(--secondary-foreground-color);
+}
+
+
+/* toggle */ 
+.toggle-container button.toggle-button-menu-open > span:last-of-type {
+    display: none;
+}
+
+.toggle-container.menu-open button.toggle-button-menu-open > span:first-of-type {
+    display: none;
+}
+
+.toggle-container.menu-open button.toggle-button-menu-open > span:last-of-type {
+    display: initial;
+}
+
+/* main menu toggle */
+body.toggle-container.menu-open > header > nav {
+    display: flex;
+}
+
+body.toggle-container.menu-open > header {
+    flex-grow: 1;
+}
+
+body.toggle-container.menu-open > footer, 
+body.toggle-container.menu-open > main {
+    display: var(--responsive-flex-display-reverse);
+}
+
+
+@media screen and ( min-width : 320px ) {
+
+}
+
+@media screen and (min-width: 375px) {
+
+}
+
+@media screen and (min-width: 414px) {
+    :root {
+        --font-size-absolute: 16px;
+    }
+}
+
+@media screen and (min-width: 640px) {
+    :root {
+        --layout-padding-left-right: 10%;
+    }
+}
+
+@media screen and (min-width: 960px){
+    :root {
+        --img-width-responsive: calc(100%/3);
+        --responsive-flex-direction: row;
+        --responsive-flex-display: none;
+        --responsive-flex-display-reverse: flex;
+    }
+
+    body.toggle-container.menu-open > header {
+        flex-grow: 0;
+    }
+}
