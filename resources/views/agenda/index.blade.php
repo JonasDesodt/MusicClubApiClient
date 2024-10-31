@@ -5,7 +5,7 @@
     <ul>
         @foreach ($agenda->lineups as $lineup)
         <li>
-            <a href="{{ 'agenda/'.$lineup->id }}">
+            <a href="{{ 'agenda/' . $lineup->id . ( $agenda->pagination->page > 1 ? '?page=' . $agenda->pagination->page : '' ) }}">
                 @if($lineup->imageDataResponse)
                     <img src="{{ 'https://localhost:7023/image/download/'.$lineup->imageDataResponse->id }}" alt="{{ $lineup->imageDataResponse->alt }}" />
                 @else
@@ -35,5 +35,7 @@
         </li>
         @endforeach
     </ul>
+
+    <x-pagination page="{{ $agenda->pagination->page }}" pageSize="{{ $agenda->pagination->pageSize }}" totalCount="{{ $agenda->pagination->totalCount }}" />
     @endif
 </x-layout>

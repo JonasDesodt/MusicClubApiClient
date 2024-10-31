@@ -13,7 +13,7 @@ class AgendaController extends Controller
     public function index(Request $request)
     {       
         $page = $request->query('page') ?? 1;
-        $pageSize = $request->query('pageSize') ?? 12;
+        $pageSize = $request->query('pageSize') ?? 1;
 
         $lineupResponse = Http::withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Lineup', 
         [
@@ -35,7 +35,8 @@ class AgendaController extends Controller
             return view('agenda.index', ['error' => 'Failed to fetch data']);
         }
 
-        $agenda = new stdClass;
+        $agenda = new stdClass; //$object = Object::first();
+        $agenda->pagination = $lineups->paginationResponse;
         $agenda->lineups = $lineups->data;
 
         foreach($lineups->data as $lineup)
@@ -47,8 +48,8 @@ class AgendaController extends Controller
                 'LineupId' => $lineup->id,
                 'SortProperty' => 'Start',
                 'SortDirection' => 'Descending'
-            ]);      
-
+            ]);  
+            
             if(!$actResponse->successful())
             {
                 return view('agenda.index', ['error' => 'Failed to fetch data']);
@@ -83,6 +84,8 @@ class AgendaController extends Controller
             return view('agenda.detail', ['error' => 'Failed to fetch data']);
         }
 
+        $lineup->page = $request->query('page') ?? 1;
+
         $actResponseDesc = Http::withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Act', 
         [
             'Page' => 1,
@@ -102,9 +105,38 @@ class AgendaController extends Controller
         if(!$actsDesc->data)
         {
             $actsDesc->data = [];
-        }      
+        }     
 
-        $lineup->data->acts = $actsDesc;
+
+        $pages = round((double)$actsDesc->paginationResponse->totalCount / (double)$actsDesc->paginationResponse->pageSize, 0, PHP_ROUND_HALF_UP);
+
+        for($i=2; $i < 2 + $pages; $i++) //needs more testing
+        {
+            $extraActResponseDesc = Http::withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Act', 
+            [
+                'Page' => $i,
+                'PageSize' => 24,
+                'LineupId' => $lineup->data->id,
+                'SortProperty' => 'Start',
+                'SortDirection' => 'Descending'
+            ]);  
+            
+            if(!$extraActResponseDesc->successful())
+            {
+                return view('agenda.index', ['error' => 'Failed to fetch data']);
+            } 
+            
+            $extraActsDesc = json_decode($extraActResponseDesc); 
+
+            if(!$extraActsDesc->data)
+            {
+                $extraActsDesc->data = [];
+            }    
+
+            $actsDesc->data = array_merge($actsDesc->data, $extraActsDesc->data);
+        }
+        
+        $lineup->data->acts = $actsDesc; // if extra extra were added => paginationResponse not up to date !
 
         $actResponseAsc = Http::withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Act', 
         [
