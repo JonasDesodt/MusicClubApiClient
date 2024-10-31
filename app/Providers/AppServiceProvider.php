@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Http;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +12,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        Http::macro('custom', function () {
+            return Http::withHeaders([
+                'Accept-Language' => app()->getLocale(),
+            ]);
+        });
     }
 
     /**

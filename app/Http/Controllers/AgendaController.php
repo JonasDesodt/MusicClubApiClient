@@ -11,11 +11,11 @@ use \DateInterval;
 class AgendaController extends Controller
 {
     public function index(Request $request)
-    {       
+    {         
         $page = $request->query('page') ?? 1;
         $pageSize = $request->query('pageSize') ?? 12;
 
-        $lineupResponse = Http::withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Lineup', 
+        $lineupResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Lineup', 
         [
             'Page' => $page,
             'PageSize' => $pageSize,
@@ -25,14 +25,14 @@ class AgendaController extends Controller
 
         if(!$lineupResponse->successful())
         {
-            return view('agenda.index', ['error' => 'Failed to fetch data']);
+            return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
         }
 
         $lineups = json_decode($lineupResponse);
 
         if(!$lineups->data)
         {
-            return view('agenda.index', ['error' => 'Failed to fetch data']);
+            return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
         }
 
         $agenda = new stdClass; //$object = Object::first();
@@ -41,7 +41,7 @@ class AgendaController extends Controller
 
         foreach($lineups->data as $lineup)
         {
-            $actResponse = Http::withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Act', 
+            $actResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Act', 
             [
                 'Page' => 1,
                 'PageSize' => 5,
@@ -52,7 +52,7 @@ class AgendaController extends Controller
             
             if(!$actResponse->successful())
             {
-                return view('agenda.index', ['error' => 'Failed to fetch data']);
+                return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
             }
 
             $acts = json_decode($actResponse);     
@@ -70,23 +70,23 @@ class AgendaController extends Controller
 
     public function detail(Request $request, int $id)
     {
-        $lineupResponse = Http::withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Lineup/'.$id);  
+        $lineupResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Lineup/'.$id);  
             
         if(!$lineupResponse->successful())
         {
-            return view('agenda.detail', ['error' => 'Failed to fetch data']);
+            return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
         }
 
         $lineup = json_decode($lineupResponse);
 
         if(!$lineup->data)
         {
-            return view('agenda.detail', ['error' => 'Failed to fetch data']);
+            return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
         }
 
         $lineup->page = $request->query('page') ?? 1;
 
-        $actResponseDesc = Http::withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Act', 
+        $actResponseDesc = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Act', 
         [
             'Page' => 1,
             'PageSize' => 24,
@@ -97,7 +97,7 @@ class AgendaController extends Controller
 
         if(!$actResponseDesc->successful())
         {
-            return view('agenda.index', ['error' => 'Failed to fetch data']);
+            return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
         }
 
         $actsDesc = json_decode($actResponseDesc); 
@@ -112,7 +112,7 @@ class AgendaController extends Controller
 
         for($i=2; $i < 2 + $pages; $i++) //needs more testing
         {
-            $extraActResponseDesc = Http::withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Act', 
+            $extraActResponseDesc = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Act', 
             [
                 'Page' => $i,
                 'PageSize' => 24,
@@ -123,7 +123,7 @@ class AgendaController extends Controller
             
             if(!$extraActResponseDesc->successful())
             {
-                return view('agenda.index', ['error' => 'Failed to fetch data']);
+                return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
             } 
             
             $extraActsDesc = json_decode($extraActResponseDesc); 

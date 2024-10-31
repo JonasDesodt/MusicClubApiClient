@@ -225,6 +225,7 @@ main > a {
     flex-direction: row;
     font-weight: bold;
     text-decoration: none;
+    text-transform: lowercase;
 }
 
 main > a:hover {
@@ -275,6 +276,9 @@ main.agenda > ul.data > li > a > section {
 
 main.agenda > ul.data > li > a > section > h3 {
     font-size: var(--font-size-relative-5);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 main.agenda > ul.data > li > a > section > h3 ~ p {
@@ -301,6 +305,7 @@ main.detail > h2 > span:first-of-type {
 
 main.detail > h2 > span:nth-of-type(2) {
     font-size: .5em;
+    text-transform: lowercase;
 }
 
 main.detail > h2 ~ p {

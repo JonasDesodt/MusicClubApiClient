@@ -1,16 +1,20 @@
+@php
+    use Carbon\Carbon;
+@endphp
+
 <x-layout title="{{ $lineup->data->title ?? strftime('%A %d %B %Y', (new DateTime($lineup->data->doors))->getTimestamp()) }}" class="detail">   
 
-    <a href="{{ '/agenda' . ($lineup->page > 1 ? '?page=' .  $lineup->page : '') }}">&laquo; overview</a>
+    <a href="{{ '/agenda' . ($lineup->page > 1 ? '?page=' .  $lineup->page : '') }}">&laquo; {{ __('app.overview') }}</a>
 <!-- &#11104; -->
     <h2>
         @if($lineup->data->actsCount > 0)
             <span>{{ implode(' + ', array_slice(array_map(fn($act) => $act->name, $lineup->data->acts->data), 0, 3)) }}</span>
             
             @if($lineup->data->actsCount - 3 > 0 )
-                <span> + {{ $lineup->data->actsCount - 3 }} more</span>
+                <span> + {{ $lineup->data->actsCount - 3 }} {{ __('app.more') }}</span>
             @endif
         @else
-            <span>Acts to tba ...</span>
+            <span>{{ __('detail.acts_tba')}}</span>
         @endif
     </h2>
 
@@ -18,11 +22,12 @@
         <p>{{ $lineup->data->title }}</p>
     @endisset
 
-    <h3>{{ strftime('%A %d %B %Y', (new DateTime($lineup->data->doors))->getTimestamp()) }}</h3>
-
+    {{-- <h3>{{ strftime('%A %d %B %Y', (new DateTime($lineup->data->doors))->getTimestamp()) }}</h3> --}}
+    <h3>{{ ((Carbon::parse($lineup->data->doors))->setTimeZone('Europe/Brussels'))->locale(app()->getLocale())->translatedFormat('l, j F Y') }}</h3>
+   
     <ul class="info">
-        <li>Doors open at {{ (new DateTime($lineup->data->doors))->format('H:i') }}</li>
-        <li>First show at {{ $lineup->data->start->format('H:i') }} </li>
+        <li>{{ __('detail.doors_open_at') }} {{ (new DateTime($lineup->data->doors))->format('H:i') }}</li>
+        <li>{{ __('detail.first_show_at') }} {{ $lineup->data->start->format('H:i') }} </li>
     </ul>
 
     @isset($lineup->data->imageDataResponse)

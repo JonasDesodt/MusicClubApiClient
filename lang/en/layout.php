@@ -1,8 +1,9 @@
 <?php
 
 return [   
-    'agenda' => 'Agenda',
     'about' => 'About',
+    'agenda' => 'Agenda',
+    'close' => 'Close',
     'contact' => 'Contact',
     'menu' => 'Menu'
 ];

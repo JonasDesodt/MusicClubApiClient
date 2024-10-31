@@ -15,7 +15,7 @@
 
             <button type="button" class="toggle-button-menu-open">
                 <span>{{ __('layout.menu') }}</span>
-                <span>Close</span>
+                <span>{{ __('layout.close') }}</span>
             </button>
         </div>
 

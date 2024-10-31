@@ -1,5 +1,9 @@
-<x-layout title="Agenda" class="agenda">   
-    <h2>Agenda</h2>
+@php
+    use Carbon\Carbon;
+@endphp
+
+<x-layout title="{{ __('layout.agenda') }}" class="agenda">   
+    <h2>{{ __('layout.agenda') }}</h2>
 
     @if ($agenda->lineups && count($agenda->lineups) > 0)
     <ul class="data">
@@ -13,7 +17,7 @@
                 @endisset
 
                 <section>
-                    <h3>{{ strftime('%A %d %B %Y', (new DateTime($lineup->doors))->getTimestamp()) }}</h3>              
+                    <h3>{{ ((Carbon::parse($lineup->doors))->setTimeZone('Europe/Brussels'))->locale(app()->getLocale())->translatedFormat('l, j F Y') }}</h3>
 
                     @if($lineup->title)
                         <p>{{ $lineup->title }}</p>
