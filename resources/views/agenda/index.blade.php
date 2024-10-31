@@ -2,7 +2,7 @@
     <h2>Agenda</h2>
 
     @if ($agenda->lineups && count($agenda->lineups) > 0)
-    <ul>
+    <ul class="data">
         @foreach ($agenda->lineups as $lineup)
         <li>
             <a href="{{ 'agenda/' . $lineup->id . ( $agenda->pagination->page > 1 ? '?page=' . $agenda->pagination->page : '' ) }}">

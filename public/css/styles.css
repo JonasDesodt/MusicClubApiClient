@@ -110,6 +110,24 @@ ul.info {
     list-style-type: none;
 }
 
+ul.pagination {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 1em;
+    list-style-type: none;
+}
+
+ul.pagination > li > a {
+    color: var(--primary-foreground-color);
+    text-decoration: none;
+}
+
+ul.pagination > li > a:hover {
+    color: var(--primary-foreground-hover-color);
+}
+
 header {
     background-color: var(--secondary-background-color);
     display: flex;
@@ -166,7 +184,10 @@ header > div > button:hover *
 header > nav {
     align-items: center;
     display: var(--responsive-flex-display-reverse);
-    justify-content: center;
+    flex-direction: var(--responsive-flex-direction);
+    flex-grow: 1;
+    gap: 2em;
+    justify-content: space-between;
 }
 
 header > nav > ul {
@@ -210,24 +231,24 @@ main > a:hover {
     color: var(--primary-foreground-hover-color);
 }
 
-main.agenda > ul {
+main.agenda > ul.data {
     display: flex;
     flex-direction: column;
     list-style-type: none;
 }
 
-main.agenda > ul > li {
+main.agenda > ul.data > li {
     border-bottom: var(--divider);
     padding-bottom: 2em;
     padding-left: 0;
     padding-right: 0;
 }
 
-main.agenda > ul > li:not(:first-of-type) {
+main.agenda > ul.data > li:not(:first-of-type) {
     padding-top: 2em;
 }
 
-main.agenda > ul > li > a {
+main.agenda > ul.data > li > a {
     align-items: flex-start;
     display: flex;
     color: var(--primary-foreground-color);
@@ -236,39 +257,39 @@ main.agenda > ul > li > a {
     text-decoration: none;
 }
 
-main.agenda > ul > li > a:hover {
+main.agenda > ul.data > li > a:hover {
     color: var(--primary-foreground-hover-color);
 }
 
-main.agenda > ul > li > a > img,
-main.agenda > ul > li > a > span.dummy-img
+main.agenda > ul.data > li > a > img,
+main.agenda > ul.data > li > a > span.dummy-img
 {
     width: var(--img-width-responsive);
 }
 
-main.agenda > ul > li > a > section {
+main.agenda > ul.data > li > a > section {
     display: flex;
     flex-direction: column;
     gap: 1em;
 }
 
-main.agenda > ul > li > a > section > h3 {
+main.agenda > ul.data > li > a > section > h3 {
     font-size: var(--font-size-relative-5);
 }
 
-main.agenda > ul > li > a > section > h3 ~ p {
+main.agenda > ul.data > li > a > section > h3 ~ p {
     font-size: var(--font-size-relative-4);
     font-weight: bold;
 }
 
-main.agenda > ul > li > a > section > ul {
+main.agenda > ul.data > li > a > section > ul {
     display: flex;
     flex-direction: column;
     list-style-type: none;
     gap: .5em;
 }
 
-main.agenda > ul > li > a > section > ul > li {
+main.agenda > ul.data > li > a > section > ul > li {
     font-size: var(--font-size-relative-4);
     font-weight: bold;
     text-transform: uppercase;

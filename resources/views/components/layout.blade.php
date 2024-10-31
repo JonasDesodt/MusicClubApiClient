@@ -14,7 +14,7 @@
             <h1><a href="/">Music Club</a></h1>
 
             <button type="button" class="toggle-button-menu-open">
-                <span>Menu</span>
+                <span>{{ __('layout.menu') }}</span>
                 <span>Close</span>
             </button>
         </div>
@@ -22,14 +22,22 @@
         <nav>
             <ul>
                 <li @class(['active' => request()->is('agenda*')])>
-                    <a href="/agenda">Agenda</a>
+                    <a href="/agenda">{{ __('layout.agenda') }}</a>
                 </li>
                 <li @class(['active' => request()->is('about*')])>
-                    <a href="/about">About</a>
+                    <a href="/about">{{ __('layout.about') }}</a>
                 </li>
                 <li @class(['active' => request()->is('contact*')])>
-                    <a href="/contact">Contact</a>
+                    <a href="/contact">{{ __('layout.contact') }}</a>
                 </li>
+            </ul>
+
+            <ul>
+                @if(app()->getLocale() == 'nl')
+                    <li><a href="{{ route('set-locale', 'en') }}">English</a></li>
+                @else
+                    <li><a href="{{ route('set-locale', 'nl') }}">Nederlands</a></li>
+                @endif
             </ul>
         </nav>
     </header>

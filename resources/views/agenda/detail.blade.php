@@ -1,7 +1,7 @@
 <x-layout title="{{ $lineup->data->title ?? strftime('%A %d %B %Y', (new DateTime($lineup->data->doors))->getTimestamp()) }}" class="detail">   
 
-    <a href="{{ '/agenda' . ($lineup->page > 1 ? '?page=' .  $lineup->page : '') }}">&#11104; overview</a>
-
+    <a href="{{ '/agenda' . ($lineup->page > 1 ? '?page=' .  $lineup->page : '') }}">&laquo; overview</a>
+<!-- &#11104; -->
     <h2>
         @if($lineup->data->actsCount > 0)
             <span>{{ implode(' + ', array_slice(array_map(fn($act) => $act->name, $lineup->data->acts->data), 0, 3)) }}</span>

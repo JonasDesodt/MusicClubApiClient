@@ -13,7 +13,7 @@ class AgendaController extends Controller
     public function index(Request $request)
     {       
         $page = $request->query('page') ?? 1;
-        $pageSize = $request->query('pageSize') ?? 1;
+        $pageSize = $request->query('pageSize') ?? 12;
 
         $lineupResponse = Http::withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Lineup', 
         [
@@ -136,22 +136,11 @@ class AgendaController extends Controller
             $actsDesc->data = array_merge($actsDesc->data, $extraActsDesc->data);
         }
         
-        $lineup->data->acts = $actsDesc; // if extra extra were added => paginationResponse not up to date !
+        $lineup->data->acts = $actsDesc; // if extra acts are added => paginationResponse not up to date !
 
-        $actResponseAsc = Http::withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Act', 
-        [
-            'Page' => 1,
-            'PageSize' => 1,
-            'LineupId' => $lineup->data->id,
-            'SortProperty' => 'Start',
-            'SortDirection' => 'Ascending'
-        ]);   
-
-        $actsAsc = json_decode($actResponseAsc); 
-
-        if($actsAsc->data && count($actsAsc->data) > 0)
+        if(count($lineup->data->acts->data) > 0)
         {
-            $lineup->data->start = new DateTime($actsAsc->data[0]->start);
+            $lineup->data->start = new DateTime(end($lineup->data->acts->data)->start);
         }      
         else 
         {
