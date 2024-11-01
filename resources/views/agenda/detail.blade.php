@@ -3,9 +3,10 @@
 @endphp
 
 <x-layout title="{{ $lineup->data->title ?? strftime('%A %d %B %Y', (new DateTime($lineup->data->doors))->getTimestamp()) }}" class="detail">   
+    <a href="{{ route('agenda.index', ['locale' => app()->getLocale()] + ($lineup->page > 1 ? ['page' => $lineup->page] : [])) }}">
+        &laquo; {{ __('app.overview') }}
+    </a>
 
-    <a href="{{ '/agenda' . ($lineup->page > 1 ? '?page=' .  $lineup->page : '') }}">&laquo; {{ __('app.overview') }}</a>
-<!-- &#11104; -->
     <h2>
         @if($lineup->data->actsCount > 0)
             <span>{{ implode(' + ', array_slice(array_map(fn($act) => $act->name, $lineup->data->acts->data), 0, 3)) }}</span>
@@ -59,6 +60,4 @@
             @endforeach
         </ul>
     @endif
-
-
 </x-layout>

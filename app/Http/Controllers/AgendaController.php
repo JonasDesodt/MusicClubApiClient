@@ -13,7 +13,7 @@ class AgendaController extends Controller
     public function index(Request $request)
     {         
         $page = $request->query('page') ?? 1;
-        $pageSize = $request->query('pageSize') ?? 12;
+        $pageSize = $request->query('pageSize') ?? 1;
 
         $lineupResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Lineup', 
         [
@@ -68,8 +68,10 @@ class AgendaController extends Controller
         return view('agenda.index', compact('agenda'));  
     }
 
-    public function detail(Request $request, int $id)
+    public function detail(Request $request)//, string $locale, int $id)
     {
+        $id = $request->id;
+
         $lineupResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Lineup/'.$id);  
             
         if(!$lineupResponse->successful())

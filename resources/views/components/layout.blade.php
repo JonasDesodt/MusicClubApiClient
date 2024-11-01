@@ -11,7 +11,7 @@
 <body class="toggle-container">
     <header>
         <div>
-            <h1><a href="/">Music Club</a></h1>
+            <h1><a href="{{ route('agenda.index', ['locale' => app()->getLocale()]) }}">Music Club</a></h1>
 
             <button type="button" class="toggle-button-menu-open">
                 <span>{{ __('layout.menu') }}</span>
@@ -22,22 +22,27 @@
         <nav>
             <ul>
                 <li @class(['active' => request()->is('agenda*')])>
-                    <a href="/agenda">{{ __('layout.agenda') }}</a>
+                    <a href="{{ route('agenda.index', ['locale' => app()->getLocale()]) }}">{{ __('layout.agenda') }}</a>
                 </li>
                 <li @class(['active' => request()->is('about*')])>
-                    <a href="/about">{{ __('layout.about') }}</a>
+                    <a href="{{ route('about.index', ['locale' => app()->getLocale()]) }}">{{ __('layout.about') }}</a>
                 </li>
                 <li @class(['active' => request()->is('contact*')])>
-                    <a href="/contact">{{ __('layout.contact') }}</a>
+                    <a href="{{ route('contact.index', ['locale' => app()->getLocale()]) }}">{{ __('layout.contact') }}</a>
                 </li>
             </ul>
 
             <ul>
-                @if(app()->getLocale() == 'nl')
-                    <li><a href="{{ route('set-locale', 'en') }}">English</a></li>
-                @else
-                    <li><a href="{{ route('set-locale', 'nl') }}">Nederlands</a></li>
-                @endif
+                @php
+                    $newLocale = app()->getLocale() == 'nl' ? 'en' : 'nl';
+                    $currentLocale = app()->getLocale();
+                @endphp
+
+                <li>
+                    <a href="{{ preg_replace("/^\/$currentLocale\//", "/$newLocale/", request()->getRequestUri()) }}">
+                        {{ $newLocale == 'en' ? 'English' : 'Nederlands' }}
+                    </a>
+                </li>
             </ul>
         </nav>
     </header>
