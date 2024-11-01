@@ -1,9 +1,15 @@
 @php
     use Carbon\Carbon;
+
+    $queryString = request()->getQueryString();
 @endphp
 
 <x-layout title="{{ $lineup->data->title ?? strftime('%A %d %B %Y', (new DateTime($lineup->data->doors))->getTimestamp()) }}" class="detail">   
-    <a href="{{ route('agenda.index', ['locale' => app()->getLocale()] + ($lineup->page > 1 ? ['page' => $lineup->page] : [])) }}">
+    {{-- <a href="{{ route('agenda.index', ['locale' => app()->getLocale()] + ($lineup->page > 1 ? ['page' => $lineup->page] : [])) }}">
+        &laquo; {{ __('app.overview') }}
+    </a> --}}
+
+    <a href="{{ route('agenda.index', ['locale' => app()->getLocale()]) . (isset($queryString) ? '?' . $queryString : '') }}">
         &laquo; {{ __('app.overview') }}
     </a>
 
@@ -23,7 +29,6 @@
         <p>{{ $lineup->data->title }}</p>
     @endisset
 
-    {{-- <h3>{{ strftime('%A %d %B %Y', (new DateTime($lineup->data->doors))->getTimestamp()) }}</h3> --}}
     <h3>{{ ((Carbon::parse($lineup->data->doors))->setTimeZone('Europe/Brussels'))->locale(app()->getLocale())->translatedFormat('l, j F Y') }}</h3>
    
     <ul class="info">

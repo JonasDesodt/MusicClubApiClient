@@ -1,3 +1,7 @@
+@php
+    $currentLocale = app()->getLocale();
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,21 +25,20 @@
 
         <nav>
             <ul>
-                <li @class(['active' => request()->is('agenda*')])>
-                    <a href="{{ route('agenda.index', ['locale' => app()->getLocale()]) }}">{{ __('layout.agenda') }}</a>
+                <li @class(['is-active' => request()->is(app()->getLocale() . '/agenda*')])>
+                    <a href="{{ route('agenda.index', ['locale' => $currentLocale]) }}">{{ __('layout.agenda') }}</a>
                 </li>
-                <li @class(['active' => request()->is('about*')])>
-                    <a href="{{ route('about.index', ['locale' => app()->getLocale()]) }}">{{ __('layout.about') }}</a>
+                <li @class(['is-active' => request()->is(app()->getLocale() . '/about*')])>
+                    <a href="{{ route('about.index', ['locale' => $currentLocale]) }}">{{ __('layout.about') }}</a>
                 </li>
-                <li @class(['active' => request()->is('contact*')])>
-                    <a href="{{ route('contact.index', ['locale' => app()->getLocale()]) }}">{{ __('layout.contact') }}</a>
+                <li @class(['is-active' => request()->is(app()->getLocale() . '/contact*')])>
+                    <a href="{{ route('contact.index', ['locale' => $currentLocale]) }}">{{ __('layout.contact') }}</a>
                 </li>
             </ul>
 
             <ul>
                 @php
                     $newLocale = app()->getLocale() == 'nl' ? 'en' : 'nl';
-                    $currentLocale = app()->getLocale();
                 @endphp
 
                 <li>

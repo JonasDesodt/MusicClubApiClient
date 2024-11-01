@@ -1,27 +1,31 @@
 :root {
     --divider: 1px solid rgb(225,225,225);
     --font-size-absolute: 14px;
-    --font-size-relative-neutral: 1em;
+
     --font-size-relative-1: 2.25em;
     --font-size-relative-2: 2em;
     --font-size-relative-3: 1.75em;
     --font-size-relative-4: 1.5em;
     --font-size-relative-5: 1.25em;
+    --font-size-relative-neutral: 1em;
+    --font-size-relative-6: .75em;
     --hover-transition: 0ms;
     --layout-padding-bottom-top: 1em;
     --layout-padding-left-right: 1em;
     --layout-padding-bottom-top-main: calc(2*var(--layout-padding-bottom-top));
     --primary-foreground-color: rgb(0,0,0);
-    --primary-foreground-hover-color: rgb(0,75,0);
+    --primary-foreground-active-color: rgb(0,75,0);
+    --primary-foreground-hover-color: rgb(0,100,0);
     --responsive-flex-direction: column;
     --responsive-flex-display: flex;
     --responsive-flex-display-reverse: none;
     --img-width-fixed: 100%;
     --img-width-responsive: 100%;
     --secondary-background-color: rgb(50,50,50);
-    --secondary-foreground-active-color: rgb(24, 230, 195);
+    --secondary-foreground-is-active-color: rgb(24, 230, 195);
     --secondary-foreground-active-hover-color: rgb(19, 187, 159);
     --secondary-foreground-color: rgb(250,250,250);
+    --secondary-foreground-active-color: rgb(175,175,175);
     --secondary-foreground-hover-color: rgb(200,200,200);
     --screen-width-base: 320px; 
     --tertiary-background-color: rgb(47, 107, 47);
@@ -56,13 +60,13 @@ button {
     border: none;
     cursor: pointer;
     display: flex;
-    font-size: var(--font-size-relative-neutral);
+    font-size: var(--font-size-absolute); /* temp solution, no problems with em in other apps? */ 
     font-weight: bold;
 }
 
 button, button * {
-    background-color: var(--tertiary-background-color);
-    color: var(--tertiary-foreground-color);
+    background-color: transparent;
+    color: var(--primary-foreground-color);
     transition: background-color var(--hover-transition);
 }
 
@@ -70,6 +74,29 @@ button:hover, button:hover * {
     background-color: var(--tertiary-background-hover-color);
     color: var(--tertiary-foreground-hover-color);
 }
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+form > div {
+    display: flex;
+    flex-direction: column;
+}
+
+form > div > label {
+    font-size: var(--font-size-relative-6);
+    font-weight: bold;
+}
+form > div > input {
+    padding: .5em;
+}
+form > ul.buttons {
+    align-self: flex-end;
+}
+
 
 h1 {
     font-size: var(--font-size-relative-1);
@@ -103,6 +130,32 @@ span.dummy-img {
     justify-content: center;
 }
 
+ul.buttons {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    list-style-type: none;
+    gap: 1em;
+}
+
+ul.buttons > li > * {
+    color: var(--primary-foreground-color);
+}
+
+ul.buttons > li > a {
+    font-weight: bold;
+    text-decoration: none;
+}
+
+ul.buttons > li > *:hover {
+    color: var(--primary-foreground-hover-color);
+}
+
+ul.buttons > li > *:active {
+    color: var(--primary-foreground-active-color);
+}
+
 ul.info {
     display: flex;
     flex-direction: column;
@@ -121,12 +174,18 @@ ul.pagination {
 
 ul.pagination > li > a {
     color: var(--primary-foreground-color);
+    font-weight: bold;
     text-decoration: none;
 }
 
 ul.pagination > li > a:hover {
     color: var(--primary-foreground-hover-color);
 }
+
+ul.pagination > li > a:active {
+    color: var(--primary-foreground-active-color);
+}
+
 
 header {
     background-color: var(--secondary-background-color);
@@ -146,6 +205,10 @@ header a {
 
 header a:hover {
     color: var(--secondary-foreground-hover-color);
+}
+
+header a:active {
+    color: var(--secondary-foreground-active-color);
 }
 
 header > div {
@@ -171,6 +234,12 @@ header > div > button:hover,
 header > div > button:hover *
 {
     color: var(--secondary-foreground-hover-color);
+}
+
+header > div > button:active,
+header > div > button:active *
+{
+    color: var(--secondary-foreground-active-color);
 }
 
 header > div > button, 
@@ -201,8 +270,8 @@ header > nav > ul > li > a {
     font-weight: bold;
 }
 
-header > nav > ul > li.active > a {
-    color: var(--secondary-foreground-active-color);
+header > nav > ul > li.is-active > a {
+    color: var(--secondary-foreground-is-active-color);
 } 
 
 header > nav > ul > li.active:hover > a {
@@ -260,6 +329,10 @@ main.agenda > ul.data > li > a {
 
 main.agenda > ul.data > li > a:hover {
     color: var(--primary-foreground-hover-color);
+}
+
+main.agenda > ul.data > li > a:active {
+    color: var(--primary-foreground-active-color);
 }
 
 main.agenda > ul.data > li > a > img,

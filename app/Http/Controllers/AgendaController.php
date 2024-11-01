@@ -15,13 +15,19 @@ class AgendaController extends Controller
         $page = $request->query('page') ?? 1;
         $pageSize = $request->query('pageSize') ?? 1;
 
-        $lineupResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Lineup', 
-        [
+        $queryParams = [
             'Page' => $page,
             'PageSize' => $pageSize,
             'SortProperty' => 'Doors',
             'SortDirection' => 'Ascending'
-        ]);
+        ];
+
+        $search = $request->query('search'); 
+        if(isset($search)){
+            $queryParams['DeepSearch'] = $search; //TODO ==> add security
+        }
+
+        $lineupResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Lineup', $queryParams);
 
         if(!$lineupResponse->successful())
         {
@@ -30,7 +36,7 @@ class AgendaController extends Controller
 
         $lineups = json_decode($lineupResponse);
 
-        if(!$lineups->data)
+        if(!isset($lineups->data))
         {
             return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
         }
