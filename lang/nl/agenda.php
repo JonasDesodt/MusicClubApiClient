@@ -7,5 +7,6 @@ return [
     'no_results' => 'Geen resultaten',
     'search' => 'Zoeken',
     'search_term' => 'Zoekterm',
+    'time_zone' => 'Tijdzone',
     'until' => 'Tot'
 ];

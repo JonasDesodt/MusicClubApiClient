@@ -30,29 +30,31 @@
         </div>
 
         <nav>
-            <ul>
-                <li @class(['is-active' => request()->is(app()->getLocale() . '/agenda*')])>
-                    <a href="{{ route('agenda.index', ['locale' => $currentLocale]) }}">{{ __('layout.agenda') }}</a>
-                </li>
-                <li @class(['is-active' => request()->is(app()->getLocale() . '/about*')])>
-                    <a href="{{ route('about.index', ['locale' => $currentLocale]) }}">{{ __('layout.about') }}</a>
-                </li>
-                <li @class(['is-active' => request()->is(app()->getLocale() . '/contact*')])>
-                    <a href="{{ route('contact.index', ['locale' => $currentLocale]) }}">{{ __('layout.contact') }}</a>
-                </li>
-            </ul>
+            <div>          
+                <ul>
+                    <li @class(['is-active' => request()->is(app()->getLocale() . '/agenda*')])>
+                        <a href="{{ route('agenda.index', ['locale' => $currentLocale]) }}">{{ __('layout.agenda') }}</a>
+                    </li>
+                    <li @class(['is-active' => request()->is(app()->getLocale() . '/about*')])>
+                        <a href="{{ route('about.index', ['locale' => $currentLocale]) }}">{{ __('layout.about') }}</a>
+                    </li>
+                    <li @class(['is-active' => request()->is(app()->getLocale() . '/contact*')])>
+                        <a href="{{ route('contact.index', ['locale' => $currentLocale]) }}">{{ __('layout.contact') }}</a>
+                    </li>
+                </ul>
 
-            <ul>
-                @php
-                    $newLocale = app()->getLocale() == 'nl' ? 'en' : 'nl';
-                @endphp
+                <ul>
+                    @php
+                        $newLocale = app()->getLocale() == 'nl' ? 'en' : 'nl';
+                    @endphp
 
-                <li>
-                    <a href="{{ preg_replace("/^\/$currentLocale\//", "/$newLocale/", request()->getRequestUri()) }}">
-                        {{ $newLocale == 'en' ? 'English' : 'Nederlands' }}
-                    </a>
-                </li>
-            </ul>
+                    <li>
+                        <a href="{{ preg_replace("/^\/$currentLocale\//", "/$newLocale/", request()->getRequestUri()) }}">
+                            {{ $newLocale == 'en' ? 'English' : 'Nederlands' }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </nav>
     </header>
 

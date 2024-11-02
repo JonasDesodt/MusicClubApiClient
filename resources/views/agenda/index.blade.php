@@ -34,7 +34,7 @@
                     <input type="datetime-local" id="from" name="from" />
                 @endif
             
-                <p>Europe/Brussels</p>
+                <p>{{ __('agenda.time_zone') }}: Europe/Brussels</p>
             </div>
 
             <div>
@@ -46,7 +46,7 @@
                     <input type="datetime-local" id="until" name="until" />
                 @endif
 
-                <p>Europe/Brussels</p>
+                <p>{{ __('agenda.time_zone') }}: Europe/Brussels</p>
             </div>
         </div>
 

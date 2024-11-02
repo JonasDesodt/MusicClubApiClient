@@ -8,6 +8,7 @@
     --font-size-relative-5: 1.25em;
     --font-size-relative-neutral: 1em;
     --font-size-relative-6: .75em;
+    --font-size-relative-7: .5em;
     --hover-transition: 0ms;
     --layout-padding-bottom-top: 1em;
     --layout-padding-left-right: 1em;
@@ -21,13 +22,13 @@
     --responsive-flex-display-reverse: none;
     --img-width-fixed: 100%;
     --img-width-responsive: 100%;
-    --secondary-background-color: rgb(50, 50, 50);
+    --secondary-background-color: #2B2B2B; /*rgb(50, 50, 50);*/
     --secondary-foreground-is-active-color: rgb(225, 250, 240);
     --secondary-foreground-active-hover-color: rgb(19, 187, 159);
     --secondary-foreground-color: rgb(250,250,250);
     --secondary-foreground-active-color: rgb(175,175,175);
     --secondary-foreground-hover-color: rgb(200,200,200);
-    --screen-width-base: 320px; 
+    --screen-width-base: 320px;
     --tertiary-background-color: rgb(47, 107, 47);
     --tertiary-background-hover-color: rgb(250,250,250);
     --tertiary-foreground-color: rgb(250,250,250);
@@ -60,7 +61,7 @@ button {
     border: none;
     cursor: pointer;
     display: flex;
-    font-size: var(--font-size-relative-neutral); 
+    font-size: var(--font-size-relative-neutral);
     font-weight: bold;
 }
 
@@ -79,7 +80,7 @@ form {
     background-color: transparent;
     display: flex;
     flex-direction: column;
-    gap: 2em;    
+    gap: 2em;
 }
 
 form > div {
@@ -120,7 +121,7 @@ form > div > div > input {
 
 form > div > div > input[type=datetime-local] ~ p {
     align-self: flex-end;
-    font-size: var(--font-size-relative-6);
+    font-size: var(--font-size-relative-7);
     font-style: italic;
 }
 
@@ -234,11 +235,13 @@ header a {
     text-decoration: none;
 }
 
-header a:hover {
+header a:hover,
+header a:hover > span {
     color: var(--secondary-foreground-hover-color);
 }
 
-header a:active {
+header a:active,
+header a:active  > span {
     color: var(--secondary-foreground-active-color);
 }
 
@@ -251,6 +254,7 @@ header > div {
     gap: 1em;
     justify-content: space-between;
 }
+
 header > div > h1 {
     display: flex;
     flex-grow: 1;
@@ -274,7 +278,7 @@ header > div > button {
     display: var(--responsive-flex-display);
 }
 
-header > div > button, 
+header > div > button,
 header > div > button *
 {
     color: var(--secondary-foreground-color);
@@ -292,7 +296,7 @@ header > div > button:active *
     color: var(--secondary-foreground-active-color);
 }
 
-header > div > button, 
+header > div > button,
 header > div > button:hover,
 header > div > button *,
 header > div > button:hover *
@@ -304,25 +308,30 @@ header > nav {
     align-items: center;
     display: var(--responsive-flex-display-reverse);
     flex-direction: var(--responsive-flex-direction);
+}
+
+header > nav > div {
+    display: flex;
+    flex-direction: var(--responsive-flex-direction);
     gap: 4em;
 }
 
-header > nav > ul {
+header > nav > div > ul {
     display: flex;
     flex-direction: var(--responsive-flex-direction);
     gap: 1em;
     list-style-type: none;
 }
 
-header > nav > ul > li > a {
+header > nav > div > ul > li > a {
     font-weight: bold;
 }
 
-header > nav > ul > li.is-active > a {
+header > nav > div > ul > li.is-active > a {
     color: var(--secondary-foreground-is-active-color);
-} 
+}
 
-header > nav > ul > li.active:hover > a {
+header > nav > div > ul > li.active:hover > a {
     color: var(--secondary-foreground-active-hover-color);
 }
 
@@ -450,7 +459,7 @@ main.detail > ul:not(ul.info) {
 main.detail > ul > li {
     display: flex;
     flex-direction: var(--responsive-flex-direction);
-    gap: 2em;    
+    gap: 2em;
 }
 
 main.detail > ul > li > img {
@@ -473,7 +482,7 @@ footer * {
 }
 
 
-/* toggle */ 
+/* toggle */
 .toggle-container button.toggle-button-menu-open > span:last-of-type {
     display: none;
 }
@@ -496,7 +505,7 @@ body.toggle-container.menu-open > header {
     flex-grow: 1;
 }
 
-body.toggle-container.menu-open > footer, 
+body.toggle-container.menu-open > footer,
 body.toggle-container.menu-open > main {
     display: var(--responsive-flex-display-reverse);
 }
