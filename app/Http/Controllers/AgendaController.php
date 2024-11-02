@@ -13,13 +13,39 @@ class AgendaController extends Controller
     public function index(Request $request)
     {         
         $page = $request->query('page') ?? 1;
-        $pageSize = $request->query('pageSize') ?? 1;
+        $pageSize = $request->query('pageSize') ?? 12;
+     
+        $from = $request->query('from');
+
+        $to = $request->query('until');
+
+        if(!isset($from) && !isset($to))
+        {
+
+            //$from = gmdate("Y-m-d");
+
+            $from = gmdate('Y-m-d H:i', strtotime(date('Y-m-d') . ' 0:0' . ' Europe/Brussels'));
+        } 
+        else 
+        {
+            if(isset($from))
+            {
+                $from = gmdate('Y-m-d H:i:s', strtotime($from . ' Europe/Brussels'));
+            }
+
+            if(isset($to))
+            {
+                $to = gmdate('Y-m-d H:i:s', strtotime($to . ' Europe/Brussels'));
+            }
+        }
 
         $queryParams = [
             'Page' => $page,
             'PageSize' => $pageSize,
             'SortProperty' => 'Doors',
-            'SortDirection' => 'Ascending'
+            'SortDirection' => 'Ascending',
+            'Between.From' => $from,
+            'Between.To' => $to
         ];
 
         $search = $request->query('search'); 
@@ -43,6 +69,7 @@ class AgendaController extends Controller
 
         $agenda = new stdClass; //$object = Object::first();
         $agenda->pagination = $lineups->paginationResponse;
+        $agenda->filter = $lineups->filter;
         $agenda->lineups = $lineups->data;
 
         foreach($lineups->data as $lineup)

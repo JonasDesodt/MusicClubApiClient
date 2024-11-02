@@ -5,10 +5,6 @@
 @endphp
 
 <x-layout title="{{ $lineup->data->title ?? strftime('%A %d %B %Y', (new DateTime($lineup->data->doors))->getTimestamp()) }}" class="detail">   
-    {{-- <a href="{{ route('agenda.index', ['locale' => app()->getLocale()] + ($lineup->page > 1 ? ['page' => $lineup->page] : [])) }}">
-        &laquo; {{ __('app.overview') }}
-    </a> --}}
-
     <a href="{{ route('agenda.index', ['locale' => app()->getLocale()]) . (isset($queryString) ? '?' . $queryString : '') }}">
         &laquo; {{ __('app.overview') }}
     </a>
@@ -32,8 +28,8 @@
     <h3>{{ ((Carbon::parse($lineup->data->doors))->setTimeZone('Europe/Brussels'))->locale(app()->getLocale())->translatedFormat('l, j F Y') }}</h3>
    
     <ul class="info">
-        <li>{{ __('detail.doors_open_at') }} {{ (new DateTime($lineup->data->doors))->format('H:i') }}</li>
-        <li>{{ __('detail.first_show_at') }} {{ $lineup->data->start->format('H:i') }} </li>
+        <li>{{ __('detail.doors_open_at') }} {{ ((Carbon::parse($lineup->data->doors))->setTimeZone('Europe/Brussels'))->format('H:i') }}</li>
+        <li>{{ __('detail.first_show_at') }} {{ ((Carbon::parse($lineup->data->doors))->setTimeZone('Europe/Brussels'))->format('H:i') }} </li>
     </ul>
 
     @isset($lineup->data->imageDataResponse)

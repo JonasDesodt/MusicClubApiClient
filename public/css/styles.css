@@ -1,7 +1,6 @@
 :root {
     --divider: 1px solid rgb(225,225,225);
     --font-size-absolute: 14px;
-
     --font-size-relative-1: 2.25em;
     --font-size-relative-2: 2em;
     --font-size-relative-3: 1.75em;
@@ -13,7 +12,8 @@
     --layout-padding-bottom-top: 1em;
     --layout-padding-left-right: 1em;
     --layout-padding-bottom-top-main: calc(2*var(--layout-padding-bottom-top));
-    --primary-foreground-color: rgb(0,0,0);
+    --primary-background-color: rgb(250,250,250);
+    --primary-foreground-color: rgb(5,10,5);
     --primary-foreground-active-color: rgb(0,75,0);
     --primary-foreground-hover-color: rgb(0,100,0);
     --responsive-flex-direction: column;
@@ -21,8 +21,8 @@
     --responsive-flex-display-reverse: none;
     --img-width-fixed: 100%;
     --img-width-responsive: 100%;
-    --secondary-background-color: rgb(50,50,50);
-    --secondary-foreground-is-active-color: rgb(24, 230, 195);
+    --secondary-background-color: rgb(50, 50, 50);
+    --secondary-foreground-is-active-color: rgb(225, 250, 240);
     --secondary-foreground-active-hover-color: rgb(19, 187, 159);
     --secondary-foreground-color: rgb(250,250,250);
     --secondary-foreground-active-color: rgb(175,175,175);
@@ -36,12 +36,12 @@
 
 * {
     box-sizing: border-box;
+    font-family: Verdana, sans-serif;
     margin : 0;
     padding: 0;
 }
 
 html {
-    font-family: Verdana, sans-serif;
     font-size: var(--font-size-absolute);
 }
 
@@ -60,7 +60,7 @@ button {
     border: none;
     cursor: pointer;
     display: flex;
-    font-size: var(--font-size-absolute); /* temp solution, no problems with em in other apps? */ 
+    font-size: var(--font-size-relative-neutral); 
     font-weight: bold;
 }
 
@@ -76,27 +76,58 @@ button:hover, button:hover * {
 }
 
 form {
+    background-color: transparent;
     display: flex;
     flex-direction: column;
-    gap: 1em;
+    gap: 2em;    
 }
 
 form > div {
-    display: flex;
-    flex-direction: column;
+    display: none;
+    flex-direction: var(--responsive-flex-direction);
+    gap: 1em;
 }
 
-form > div > label {
+form.show {
+    border: var(--divider);
+    padding: 1em;
+}
+
+form.show > div,
+form.show > ul.buttons
+{
+    display: flex;
+}
+
+form.show > button {
+    display: none;
+}
+
+form > div > div {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+form > div > div > label {
     font-size: var(--font-size-relative-6);
     font-weight: bold;
 }
-form > div > input {
+
+form > div > div > input {
     padding: .5em;
 }
-form > ul.buttons {
+
+form > div > div > input[type=datetime-local] ~ p {
     align-self: flex-end;
+    font-size: var(--font-size-relative-6);
+    font-style: italic;
 }
 
+form > ul.buttons {
+    align-self: flex-end;
+    display: none;
+}
 
 h1 {
     font-size: var(--font-size-relative-1);
@@ -215,9 +246,28 @@ header > div {
     align-items: center;
     display: flex;
     flex-direction: row;
+    flex-basis: 100%;
     flex-wrap: wrap;
     gap: 1em;
     justify-content: space-between;
+}
+header > div > h1 {
+    display: flex;
+    flex-grow: 1;
+}
+
+header > div > h1 > a {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    gap: .5em;
+}
+
+header > div > h1 > a > svg {
+    flex-grow: 1;
+    max-width: 1.75em;
 }
 
 header > div > button {
@@ -254,9 +304,7 @@ header > nav {
     align-items: center;
     display: var(--responsive-flex-display-reverse);
     flex-direction: var(--responsive-flex-direction);
-    flex-grow: 1;
-    gap: 2em;
-    justify-content: space-between;
+    gap: 4em;
 }
 
 header > nav > ul {
@@ -279,6 +327,7 @@ header > nav > ul > li.active:hover > a {
 }
 
 main {
+    background-color: var(--primary-background-color);
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -440,6 +489,7 @@ footer * {
 /* main menu toggle */
 body.toggle-container.menu-open > header > nav {
     display: flex;
+    flex-grow: 1;
 }
 
 body.toggle-container.menu-open > header {
