@@ -11,16 +11,11 @@ class LocaleMiddleware
     {
         $locale = $request->locale;
 
-        if(in_array($locale , ['en', 'nl'])) // set the locals in app config file ==> config('app.locales') should return an array with the locales
+        if(in_array($locale , ['en', 'nl'])) // set the locales in app config file ==> config('app.locales') should return an array with the locales
         {
             App::setLocale($locale);
-        } else {
-            $defaultLocale = config('app.locale');
-
-
-            return redirect()->to(preg_replace("/^\/$locale\//", "/$defaultLocale/", request()->getRequestUri()));
-        }
-        
+        } 
+         
         return $next($request);
     }
 }

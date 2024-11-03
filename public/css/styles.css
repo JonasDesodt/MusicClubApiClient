@@ -89,11 +89,6 @@ form > div {
     gap: 1em;
 }
 
-form.show {
-    border: var(--divider);
-    padding: 1em;
-}
-
 form.show > div,
 form.show > ul.buttons
 {

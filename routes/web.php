@@ -5,8 +5,7 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\ContactController;
 
-// Define a route group with a locale parameter at the end
-Route::group(['prefix' => '{locale}'/*, 'where' => ['locale' => 'en|nl']*/], function () {
+Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'en|nl']], function () {
 
     // Route::get('/', function () {
     //     return view('welcome');
@@ -22,6 +21,11 @@ Route::group(['prefix' => '{locale}'/*, 'where' => ['locale' => 'en|nl']*/], fun
     Route::get('/agenda/{id}', [AgendaController::class, 'detail'])->where('id', '[0-9]+')->name('agenda.detail');
 
 
-    Route::get('/contaxt', [ContactController::class, 'index'])->name('contact.index');
+    Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+
+    Route::fallback(function () {
+        return response()->view('error', ['error' => 'page_not_found', 'return_url' => url()->previous()]);
+    });
 });
+
 
