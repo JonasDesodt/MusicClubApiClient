@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Http;
 use stdClass;
 use \DateTime;
 use \DateInterval;
+use PhpParser\Node\Identifier;
+
+use function Laravel\Prompts\text;
 
 class AgendaController extends Controller
 {
@@ -172,6 +175,42 @@ class AgendaController extends Controller
         }
         
         $lineup->data->acts = $actsDesc; // if extra acts are added => paginationResponse not up to date !
+
+        $languageResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Language', 
+        [
+            'Page' => 1,
+            'PageSize' => 1,
+            'Identifier' => app()->getLocale(),
+        ]);  
+
+        $languagePagedServiceResult = json_decode($languageResponse);
+
+        if(!$languagePagedServiceResult->data || count($languagePagedServiceResult->data) == 0)
+        {
+            return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
+        }
+
+        $languageDataResponse = $languagePagedServiceResult->data[0];
+
+        foreach($lineup->data->acts->data as $act)
+        {
+            $descriptionTranslationResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/DescriptionTranslation', 
+            [
+                'Page' => 1,
+                'PageSize' => 1,
+                'DescriptionId' => $act->descriptionDataResponse->id,
+                'LanguageId' => $languageDataResponse->id
+            ]);  
+    
+            $descriptionTranslationPagedServiceResult = json_decode($descriptionTranslationResponse);
+
+            if(!$descriptionTranslationPagedServiceResult->data || count($descriptionTranslationPagedServiceResult->data) == 0)
+            {
+                return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
+            }
+
+            $act->description = $descriptionTranslationPagedServiceResult->data[0]->text;
+        }
 
         if(count($lineup->data->acts->data) > 0)
         {
