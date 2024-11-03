@@ -6,47 +6,45 @@
     $until = request()->query('until');
 @endphp
 
-<x-layout title="{{ __('layout.agenda') }}" class="agenda">   
+<x-layout title="{{ __('layout.agenda') }}" class="agenda">
     <h2>{{ __('layout.agenda') }}</h2>
 
-    <form method="get" @class(['show' => isset($search) || isset($from) || isset($until), 'toggle-container'])>
+    <form method="get" @class(['show' => count(old()) > 0 || isset($search) ||  isset($from) || isset($until), 'toggle-container']) >
         <div>
             <div>
                 <label for="search">{{ __('agenda.search_term') }}</label>
 
-                @if(isset($search))
-                    <input type="text" id="search" name="search" value="{{ $search }}"/>
-                @else
-                    <input type="text" id="search" name="search"/>
-                @endif
+                <input type="text" id="search" name="search" value="{{ old('search') ?? $search }}"/>
+
+                @error('search')
+                    <p>{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
-                <label for="from">{{ __('agenda.from')}}</label>
+                <label for="from">{{ __('agenda.from')}}
 
-                @php
-                    $from = request()->query('from') ?? ((Carbon::parse($agenda->filter->between->from))->setTimeZone('Europe/Brussels'))->format('Y-m-d H:i');
-                @endphp
+                    <span>{{ __('agenda.time_zone') }}: Europe/Brussels</span>
+                </label>
 
-                @if(isset($from))
-                    <input type="datetime-local" id="from" name="from" value="{{ $from }}" />
-                @else
-                    <input type="datetime-local" id="from" name="from" />
-                @endif
-            
-                <p>{{ __('agenda.time_zone') }}: Europe/Brussels</p>
+                <input type="datetime-local" id="from" name="from" value="{{ old('from') ?? $from ?? (isset($agenda->filter->between->from) ?  ((Carbon::parse($agenda->filter->between->from))->setTimeZone('Europe/Brussels'))->format('Y-m-d H:i') : null ) }}" />
+
+                @error('from')
+                    <p>{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
-                <label for="until">{{ __('agenda.until' )}}</label>
+                <label for="until">{{ __('agenda.until' )}}
+                
+                    <span>{{ __('agenda.time_zone') }}: Europe/Brussels</span>
+                </label>
 
-                @if(isset($until))
-                    <input type="datetime-local" id="until" name="until" value="{{ $until }}" />
-                @else
-                    <input type="datetime-local" id="until" name="until" />
-                @endif
-
-                <p>{{ __('agenda.time_zone') }}: Europe/Brussels</p>
+                <input type="datetime-local" id="until" name="until" value="{{ old('until') ?? $until }}" />
+                
+                @error('until')
+                    <p>{{ $message }}</p>
+                @enderror
             </div>
         </div>
 
@@ -60,9 +58,9 @@
     </form>
 
     @if ($agenda->lineups && count($agenda->lineups) > 0)
-        @foreach ($agenda->lineups as $lineup)
-            <ul class="data">
-                <li>
+        <ul class="data">
+            @foreach ($agenda->lineups as $lineup)
+                <li @class(['archive' => Carbon::parse($lineup->doors) < gmdate('Y-m-d')])>
                     <a href="{{ route('agenda.detail', ['locale' => app()->getLocale(), 'id' => $lineup->id ] + request()->query()) }}">
                             @if($lineup->imageDataResponse)
                                 <img src="{{ 'https://localhost:7023/image/download/'.$lineup->imageDataResponse->id }}" alt="{{ $lineup->imageDataResponse->alt }}" />
@@ -84,16 +82,16 @@
                                         @endforeach
                                     </ul>
 
-                                    @if($lineup->actsCount > count($lineup->acts))                    
-                                        <p>+ {{ $lineup->actsCount - count($lineup->acts) }} more</p>                                     
+                                    @if($lineup->actsCount > count($lineup->acts))
+                                        <p>+ {{ $lineup->actsCount - count($lineup->acts) }} more</p>
                                     @endif
                                 @endif
                         </section>
                     </a>
                 </li>
-            </ul>
-        @endforeach
-
+            @endforeach
+        </ul>
+        
         <x-pagination page="{{ $agenda->pagination->page }}" pageSize="{{ $agenda->pagination->pageSize }}" totalCount="{{ $agenda->pagination->totalCount }}" />
     @else
         <p>{{ __('agenda.no_results')}}</p>

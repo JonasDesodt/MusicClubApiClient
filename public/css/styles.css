@@ -14,6 +14,7 @@
     --layout-padding-left-right: 1em;
     --layout-padding-bottom-top-main: calc(2*var(--layout-padding-bottom-top));
     --primary-background-color: rgb(250,250,250);
+    --primary-error-color: rgb(250,0,0);
     --primary-foreground-color: rgb(5,10,5);
     --primary-foreground-active-color: rgb(0,75,0);
     --primary-foreground-hover-color: rgb(0,100,0);
@@ -106,18 +107,29 @@ form > div > div {
 }
 
 form > div > div > label {
+    align-items: flex-end;
+    display: flex;
+    flex-direction: row;
     font-size: var(--font-size-relative-6);
     font-weight: bold;
+    gap: 1em;
+    justify-content: space-between;
+}
+
+form > div > div > label > span {
+    font-size: .75em;
+    font-weight: normal;
+    font-style: italic;
 }
 
 form > div > div > input {
     padding: .5em;
 }
 
-form > div > div > input[type=datetime-local] ~ p {
-    align-self: flex-end;
-    font-size: var(--font-size-relative-7);
-    font-style: italic;
+form > div > div > input ~ p {
+    color: var(--primary-error-color);
+    font-size: var(--font-size-relative-6);
+    font-weight: bold;
 }
 
 form > ul.buttons {
@@ -365,6 +377,10 @@ main.agenda > ul.data > li {
     padding-bottom: 2em;
     padding-left: 0;
     padding-right: 0;
+}
+
+main.agenda > ul.data > li.archive {
+    opacity: .75;
 }
 
 main.agenda > ul.data > li:not(:first-of-type) {

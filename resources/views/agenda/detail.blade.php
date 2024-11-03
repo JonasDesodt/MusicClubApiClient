@@ -29,7 +29,7 @@
    
     <ul class="info">
         <li>{{ __('detail.doors_open_at') }} {{ ((Carbon::parse($lineup->data->doors))->setTimeZone('Europe/Brussels'))->format('H:i') }}</li>
-        <li>{{ __('detail.first_show_at') }} {{ ((Carbon::parse($lineup->data->doors))->setTimeZone('Europe/Brussels'))->format('H:i') }} </li>
+        <li>{{ __('detail.first_show_at') }} {{ ((Carbon::parse($lineup->data->start))->setTimeZone('Europe/Brussels'))->format('H:i') }} </li>
     </ul>
 
     @isset($lineup->data->imageDataResponse)
@@ -45,7 +45,7 @@
             @foreach ($lineup->data->acts->data as $act)
                 <li>
                     @isset($act->imageDataResponse)
-                        <img src="{{ 'https://localhost:7023/image/download/'.$act->imageDataResponse->id }}" alt="{{ $act->imageDataResponse->id }}" />
+                        <img src="{{ 'https://localhost:7023/image/download/'.$act->imageDataResponse->id }}" alt="{{ $act->imageDataResponse->alt }}" />
                     @else
                         <span class="dummy-img">no image</span>
                     @endisset

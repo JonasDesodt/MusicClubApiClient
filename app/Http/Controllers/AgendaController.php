@@ -7,14 +7,47 @@ use Illuminate\Support\Facades\Http;
 use stdClass;
 use \DateTime;
 use \DateInterval;
+use Illuminate\Http\RedirectResponse;
 use PhpParser\Node\Identifier;
 
 use function Laravel\Prompts\text;
 
 class AgendaController extends Controller
 {
-    public function index(Request $request)
-    {         
+    // public function filter(Request $request) : RedirectResponse
+    // {
+    //     $validatedData = $request->validate([
+    //         'search' => 'nullable|string|max:5',
+    //         'from' => 'date',
+    //         'to' => 'date'
+    //     ]); 
+
+    //     return to_route('agenda.index', ['locale' => app()->getLocale()]);
+    // } 
+
+    public function index(Request $request) 
+    {     
+        // dd($request->old('search'));
+
+        $validatedData = $request->validate([
+            'page' => 'int|min:1',
+            'pageSize' => 'int|min:1|max:24',
+            'search' => 'nullable|string|max:5',
+            'from' => 'nullable|date',
+            'until' => 'nullable|date|after_or_equal:from'
+        ]);       
+
+        // // , [], [
+        // //     'page' => $request->input('page', 1),
+        // //     'pageSize' => $request->input('pageSize', 10),
+        // //     'search' => $request->input('search', ''),
+        // //     'from' => $request->input('from', '2024-01-01'),
+        // //     'to' => $request->input('to', now()->toDateString())
+        // // ]);
+    
+ 
+        // // dd($validatedData);
+
         $page = $request->query('page') ?? 1;
         $pageSize = $request->query('pageSize') ?? 12;
      
@@ -98,9 +131,15 @@ class AgendaController extends Controller
                 $acts->data = [];
             }
 
-            $lineup->acts = $acts->data;                                       
+            $lineup->acts = $acts->data;       
+            
+            if(!isset($lineup->imageDataResponse) && count($acts->data) > 0)
+            {
+                $lineup->imageDataResponse = $acts->data[0]->imageDataResponse;
+            }
         }        
 
+        
         return view('agenda.index', compact('agenda'));  
     }
 

@@ -15,8 +15,11 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => 'en|nl']], functio
 
     Route::get('/about', [AboutController::class, 'index'])->name('about.index');
 
-
     Route::get('/agenda', [AgendaController::class, 'index'])->name('agenda.index');
+
+    // Route::get('/agenda/filter', [AgendaController::class, 'filter'])->name('agenda.filter');
+
+
     
     Route::get('/agenda/{id}', [AgendaController::class, 'detail'])->where('id', '[0-9]+')->name('agenda.detail');
 
