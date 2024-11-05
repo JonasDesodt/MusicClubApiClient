@@ -6,10 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use \DateTime;
 use \DateInterval;
+use Illuminate\Contracts\View\View;
 
 class AgendaController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request) : View
+    {
         $validatedData = $request->validate([
             'page' => 'int|min:1',
             'search' => 'nullable|string|max:5',
@@ -47,140 +49,68 @@ class AgendaController extends Controller
             'Until' => $until
         ];
 
-        if(isset($search)){
+        if(isset($search))
+        {
             $queryParams['Search'] = $search;
         }
 
-        $agendaResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/public/agenda', $queryParams);
+        $agendaResponse = Http::custom()
+            ->withOptions(['verify' => false] /* dev only! */)
+            ->get('https://localhost:7023/public/agenda', $queryParams);
+
+        if(!$agendaResponse->successful())
+        {
+            return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
+        }
 
         $agenda = json_decode($agendaResponse);
 
         return view('agenda.index', compact('agenda'));  
     }   
 
-    public function detail(Request $request)//, string $locale, int $id)
+    public function detail(Request $request) : View
     {
+        $locale = app()->getLocale();
         $id = $request->id;
 
-        $lineupResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Lineup/'.$id);  
-        
+        $lineupResponse = Http::custom()
+            ->withOptions(['verify' => false] /* dev only! */)
+            ->get('https://localhost:7023/public/agenda/'.$locale.'/'.$id);
 
+        $lineup = json_decode($lineupResponse);        
 
-        if(!$lineupResponse->successful())
-        {
-            return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
-        }
+        $lineup->start = null;
 
-        $lineup = json_decode($lineupResponse);
-        
-        if(!$lineup->data)
-        {
-            return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
-        }
-
-        $lineup->page = $request->query('page') ?? 1;
-
-        $actResponseDesc = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Act', 
-        [
-            'Page' => 1,
-            'PageSize' => 24,
-            'LineupId' => $lineup->data->id,
-            'SortProperty' => 'Start',
-            'SortDirection' => 'Descending'
-        ]);      
-
-        if(!$actResponseDesc->successful())
-        {
-            return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
-        }
-
-        $actsDesc = json_decode($actResponseDesc); 
-
-        if(!$actsDesc->data)
-        {
-            $actsDesc->data = [];
-        }     
-
-
-        $pages = round((double)$actsDesc->paginationResponse->totalCount / (double)$actsDesc->paginationResponse->pageSize, 0, PHP_ROUND_HALF_UP);
-
-        for($i=2; $i < 2 + $pages; $i++) //needs more testing
-        {
-            $extraActResponseDesc = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Act', 
-            [
-                'Page' => $i,
-                'PageSize' => 24,
-                'LineupId' => $lineup->data->id,
-                'SortProperty' => 'Start',
-                'SortDirection' => 'Descending'
-            ]);  
-            
-            if(!$extraActResponseDesc->successful())
-            {
-                return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
-            } 
-            
-            $extraActsDesc = json_decode($extraActResponseDesc); 
-
-            if(!$extraActsDesc->data)
-            {
-                $extraActsDesc->data = [];
-            }    
-
-            $actsDesc->data = array_merge($actsDesc->data, $extraActsDesc->data);
-        }
-        
-        $lineup->data->acts = $actsDesc; // if extra acts are added => paginationResponse not up to date !
-
-        $languageResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Language', 
-        [
-            'Page' => 1,
-            'PageSize' => 1,
-            'Identifier' => app()->getLocale(),
-        ]);  
-
-        $languagePagedServiceResult = json_decode($languageResponse);
-
-        if(!$languagePagedServiceResult->data || count($languagePagedServiceResult->data) == 0)
-        {
-            return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
-        }
-
-        $languageDataResponse = $languagePagedServiceResult->data[0];
-
-        foreach($lineup->data->acts->data as $act)
-        {
-            if(!isset($act->descriptionDataResponse)){
-                continue;
+        if (count($lineup->acts) > 0) {
+            foreach (array_reverse($lineup->acts) as $act) {
+                if (!is_null($act->start)) {
+                    $lineup->start = new DateTime($act->start);
+                    break;
+                }
             }
+        }
+        
+        if (is_null($lineup->start)) {
+            $lineup->start = (new DateTime($lineup->doors))->add(new DateInterval('PT30M'));
+        }   
 
-            $descriptionTranslationResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/DescriptionTranslation', 
-            [
-                'Page' => 1,
-                'PageSize' => 1,
-                'DescriptionId' => $act->descriptionDataResponse->id,
-                'LanguageId' => $languageDataResponse->id
-            ]);  
-    
-            $descriptionTranslationPagedServiceResult = json_decode($descriptionTranslationResponse);
+        return view('agenda.detail', compact('lineup'));
+    }
 
-            if(!$descriptionTranslationPagedServiceResult->data || count($descriptionTranslationPagedServiceResult->data) == 0)
-            {
-                return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
+    public function setLineupStart($lineup) {
+        $lineup->start = null;
+
+        if (count($lineup->acts) > 0) {
+            foreach (array_reverse($lineup->acts) as $act) {
+                if (!is_null($act->start)) {
+                    $lineup->start = new DateTime($act->start);
+                    break;
+                }
             }
-
-            $act->description = $descriptionTranslationPagedServiceResult->data[0]->text;
         }
-
-        if(count($lineup->data->acts->data) > 0)
-        {
-            $lineup->data->start = new DateTime(end($lineup->data->acts->data)->start);
-        }      
-        else 
-        {
-            $lineup->data->start = (new DateTime($lineup->data->doors))->add(new DateInterval('PT' . 30 . 'M'));
+        
+        if (is_null($lineup->start)) {
+            $lineup->start = (new DateTime($lineup->doors))->add(new DateInterval('PT30M'));
         }
-
-        return view('agenda.detail', compact('lineup'));  
     }
 }
