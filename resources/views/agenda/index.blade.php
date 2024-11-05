@@ -27,7 +27,7 @@
                     <span>{{ __('agenda.time_zone') }}: Europe/Brussels</span>
                 </label>
 
-                <input type="datetime-local" id="from" name="from" value="{{ old('from') ?? $from ?? (isset($agenda->filter->between->from) ?  ((Carbon::parse($agenda->filter->between->from))->setTimeZone('Europe/Brussels'))->format('Y-m-d H:i') : null ) }}" />
+                <input type="datetime-local" id="from" name="from" value="{{ old('from') ?? $from ?? (isset($agenda->from) ? ((Carbon::parse($agenda->from))->setTimeZone('Europe/Brussels'))->format('Y-m-d H:i') : null ) }}" />
 
                 @error('from')
                     <p>{{ $message }}</p>
@@ -62,8 +62,8 @@
             @foreach ($agenda->lineups as $lineup)
                 <li @class(['archive' => Carbon::parse($lineup->doors) < gmdate('Y-m-d')])>
                     <a href="{{ route('agenda.detail', ['locale' => app()->getLocale(), 'id' => $lineup->id ] + request()->query()) }}">
-                            @if($lineup->imageDataResponse)
-                                <img src="{{ 'https://localhost:7023/image/download/'.$lineup->imageDataResponse->id }}" alt="{{ $lineup->imageDataResponse->alt }}" />
+                            @if($lineup->image)
+                                <img src="{{ 'https://localhost:7023/image/download/'.$lineup->image->id }}" alt="{{ $lineup->image->alt }}" />
                             @else
                                 <span class="dummy-img">No image</span>
                             @endisset
@@ -82,8 +82,8 @@
                                         @endforeach
                                     </ul>
 
-                                    @if($lineup->actsCount > count($lineup->acts))
-                                        <p>+ {{ $lineup->actsCount - count($lineup->acts) }} more</p>
+                                    @if($lineup->actsTotalCount > count($lineup->acts))
+                                        <p>+ {{ $lineup->actsTotalCount - count($lineup->acts) }} more</p>
                                     @endif
                                 @endif
                         </section>
@@ -92,7 +92,7 @@
             @endforeach
         </ul>
         
-        <x-pagination page="{{ $agenda->pagination->page }}" pageSize="{{ $agenda->pagination->pageSize }}" totalCount="{{ $agenda->pagination->totalCount }}" />
+        <x-pagination page="{{ $agenda->page }}" pageSize="{{ $agenda->pageSize }}" totalCount="{{ $agenda->totalCount }}" />
     @else
         <p>{{ __('agenda.no_results')}}</p>
     @endif

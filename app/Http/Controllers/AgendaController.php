@@ -4,62 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use stdClass;
 use \DateTime;
 use \DateInterval;
-use Illuminate\Http\RedirectResponse;
-use PhpParser\Node\Identifier;
-
-use function Laravel\Prompts\text;
 
 class AgendaController extends Controller
 {
-    // public function filter(Request $request) : RedirectResponse
-    // {
-    //     $validatedData = $request->validate([
-    //         'search' => 'nullable|string|max:5',
-    //         'from' => 'date',
-    //         'to' => 'date'
-    //     ]); 
-
-    //     return to_route('agenda.index', ['locale' => app()->getLocale()]);
-    // } 
-
-    public function index(Request $request) 
-    {     
-        // dd($request->old('search'));
-
+    public function index(Request $request){
         $validatedData = $request->validate([
             'page' => 'int|min:1',
-            'pageSize' => 'int|min:1|max:24',
             'search' => 'nullable|string|max:5',
             'from' => 'nullable|date',
             'until' => 'nullable|date|after_or_equal:from'
-        ]);       
+        ]);    
 
-        // // , [], [
-        // //     'page' => $request->input('page', 1),
-        // //     'pageSize' => $request->input('pageSize', 10),
-        // //     'search' => $request->input('search', ''),
-        // //     'from' => $request->input('from', '2024-01-01'),
-        // //     'to' => $request->input('to', now()->toDateString())
-        // // ]);
-    
- 
-        // // dd($validatedData);
-
-        $page = $request->query('page') ?? 1;
-        $pageSize = $request->query('pageSize') ?? 12;
-     
-        $from = $request->query('from');
-
-        $to = $request->query('until');
-
+        $page = $validatedData['page'] ?? 1;
+        $pageSize = 12;
+        $from = $validatedData['from'] ?? null;
+        $until = $validatedData['until'] ?? null;
+        $search = $validatedData['search'] ?? null;
+        
         if(!isset($from) && !isset($to))
         {
-
-            //$from = gmdate("Y-m-d");
-
             $from = gmdate('Y-m-d H:i', strtotime(date('Y-m-d') . ' 0:0' . ' Europe/Brussels'));
         } 
         else 
@@ -69,93 +34,45 @@ class AgendaController extends Controller
                 $from = gmdate('Y-m-d H:i:s', strtotime($from . ' Europe/Brussels'));
             }
 
-            if(isset($to))
+            if(isset($until))
             {
-                $to = gmdate('Y-m-d H:i:s', strtotime($to . ' Europe/Brussels'));
+                $until = gmdate('Y-m-d H:i:s', strtotime($until . ' Europe/Brussels'));
             }
         }
 
         $queryParams = [
             'Page' => $page,
             'PageSize' => $pageSize,
-            'SortProperty' => 'Doors',
-            'SortDirection' => 'Ascending',
-            'Between.From' => $from,
-            'Between.To' => $to
+            'From' => $from,
+            'Until' => $until
         ];
 
-        $search = $request->query('search'); 
         if(isset($search)){
-            $queryParams['DeepSearch'] = $search; //TODO ==> add security
+            $queryParams['Search'] = $search;
         }
 
-        $lineupResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Lineup', $queryParams);
+        $agendaResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/public/agenda', $queryParams);
 
-        if(!$lineupResponse->successful())
-        {
-            return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
-        }
+        $agenda = json_decode($agendaResponse);
 
-        $lineups = json_decode($lineupResponse);
-
-        if(!isset($lineups->data))
-        {
-            return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
-        }
-
-        $agenda = new stdClass; //$object = Object::first();
-        $agenda->pagination = $lineups->paginationResponse;
-        $agenda->filter = $lineups->filter;
-        $agenda->lineups = $lineups->data;
-
-        foreach($lineups->data as $lineup)
-        {
-            $actResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Act', 
-            [
-                'Page' => 1,
-                'PageSize' => 5,
-                'LineupId' => $lineup->id,
-                'SortProperty' => 'Start',
-                'SortDirection' => 'Descending'
-            ]);  
-            
-            if(!$actResponse->successful())
-            {
-                return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
-            }
-
-            $acts = json_decode($actResponse);     
-
-            if(!$acts->data)
-            {
-                $acts->data = [];
-            }
-
-            $lineup->acts = $acts->data;       
-            
-            if(!isset($lineup->imageDataResponse) && count($acts->data) > 0)
-            {
-                $lineup->imageDataResponse = $acts->data[0]->imageDataResponse;
-            }
-        }        
-
-        
         return view('agenda.index', compact('agenda'));  
-    }
+    }   
 
     public function detail(Request $request)//, string $locale, int $id)
     {
         $id = $request->id;
 
         $lineupResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/Lineup/'.$id);  
-            
+        
+
+
         if(!$lineupResponse->successful())
         {
             return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
         }
 
         $lineup = json_decode($lineupResponse);
-
+        
         if(!$lineup->data)
         {
             return view('error', ['error' => 'data_fetch_failed', 'return_url' => url()->previous()]);
@@ -233,6 +150,10 @@ class AgendaController extends Controller
 
         foreach($lineup->data->acts->data as $act)
         {
+            if(!isset($act->descriptionDataResponse)){
+                continue;
+            }
+
             $descriptionTranslationResponse = Http::custom()->withOptions(['verify' => false] /* dev only! */)->get('https://localhost:7023/DescriptionTranslation', 
             [
                 'Page' => 1,
